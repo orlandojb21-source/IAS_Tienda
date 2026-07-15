@@ -9,10 +9,11 @@ personalizada. Es la primera de 3 apps genéricas (tienda, citas, restaurantes).
 
 - **Frontend**: Next.js (App Router, TypeScript, Tailwind CSS), desplegado en
   Vercel.
-- **Base de datos**: Supabase (Postgres) — pendiente de configurar. Reemplaza
-  el patrón de Google Sheets usado en los proyectos personalizados anteriores,
-  porque esta app debe soportar **muchos negocios distintos usando la misma
-  app a la vez**, cada uno viendo solo su propia información.
+- **Base de datos**: Supabase (Postgres). Reemplaza el patrón de Google
+  Sheets usado en los proyectos personalizados anteriores, porque esta app
+  debe soportar **muchos negocios distintos usando la misma app a la vez**,
+  cada uno viendo solo su propia información. Cliente en
+  `src/lib/supabase.ts`. Todavía sin tablas creadas.
 - **Auth**: por definir (probablemente login con Google, igual que en
   proyectos anteriores).
 
@@ -20,6 +21,7 @@ personalizada. Es la primera de 3 apps genéricas (tienda, citas, restaurantes).
 
 ```bash
 npm install
+cp .env.local.example .env.local   # completa con tus datos de Supabase
 npm run dev
 ```
 
