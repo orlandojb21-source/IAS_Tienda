@@ -25,6 +25,8 @@ create table productos (
   precio numeric(12, 2) not null default 0,
   costo numeric(12, 2) not null default 0,
   stock integer not null default 0,
+  stock_minimo integer not null default 0,
+  unidad_medida text not null default 'unidad',
   categoria text,
   activo boolean not null default true,
   creado_en timestamptz not null default now()
@@ -46,9 +48,13 @@ create table ventas (
   cliente_id uuid references clientes (id),
   vendedor_id uuid references perfiles (id),
   total numeric(12, 2) not null default 0,
+  descuento numeric(12, 2) not null default 0,
+  monto_pagado numeric(12, 2) not null default 0,
   metodo_pago text,
   creado_en timestamptz not null default now()
 );
+-- La deuda de un cliente (fiado) no se guarda como numero aparte: se
+-- calcula sumando (total - descuento - monto_pagado) de sus ventas.
 
 -- 6. Detalle de cada venta (que productos y cuantos)
 create table venta_items (
