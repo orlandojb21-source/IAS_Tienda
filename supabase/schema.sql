@@ -5,6 +5,9 @@
 create table negocios (
   id uuid primary key default gen_random_uuid(),
   nombre text not null,
+  telefono text,
+  direccion text,
+  logo_url text,
   creado_en timestamptz not null default now()
 );
 
@@ -86,6 +89,18 @@ as $$
   select negocio_id from public.perfiles where id = auth.uid();
 $$;
 
+-- Funcion de apoyo: el usuario que inicio sesion es admin de su negocio?
+create function auth_es_admin()
+returns boolean
+language sql
+security definer
+stable
+as $$
+  select exists (
+    select 1 from public.perfiles where id = auth.uid() and rol = 'admin'
+  );
+$$;
+
 -- Activar seguridad por fila (cada negocio solo ve lo suyo)
 alter table negocios enable row level security;
 alter table perfiles enable row level security;
@@ -98,12 +113,17 @@ alter table gastos enable row level security;
 -- Permisos base: un usuario que inicio sesion puede intentar leer/escribir
 -- (las politicas de abajo son las que realmente filtran fila por fila)
 grant usage on schema public to authenticated;
-grant select on negocios, perfiles to authenticated;
+grant select, update on negocios to authenticated;
+grant select on perfiles to authenticated;
 grant select, insert, update, delete on productos, clientes, ventas, venta_items, gastos to authenticated;
 
 -- Politicas: cada usuario solo ve su propio negocio y su propio perfil
 create policy "ver mi negocio" on negocios
   for select using (id = auth_negocio_id());
+
+create policy "actualizar mi negocio (solo admin)" on negocios
+  for update using (id = auth_negocio_id() and auth_es_admin())
+  with check (id = auth_negocio_id() and auth_es_admin());
 
 create policy "ver mi perfil" on perfiles
   for select using (id = auth.uid());
@@ -123,3 +143,22 @@ create policy "venta_items del propio negocio" on venta_items
 
 create policy "gastos del propio negocio" on gastos
   for all using (negocio_id = auth_negocio_id()) with check (negocio_id = auth_negocio_id());
+
+-- Almacenamiento del logo de cada tienda (bucket publico de solo lectura;
+-- cada negocio solo puede subir/editar dentro de su propia carpeta, que
+-- se llama igual que su negocio_id)
+insert into storage.buckets (id, name, public)
+values ('logos', 'logos', true)
+on conflict (id) do nothing;
+
+create policy "subir logo del propio negocio" on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'logos' and (storage.foldername(name))[1] = auth_negocio_id()::text);
+
+create policy "actualizar logo del propio negocio" on storage.objects
+  for update to authenticated
+  using (bucket_id = 'logos' and (storage.foldername(name))[1] = auth_negocio_id()::text);
+
+create policy "borrar logo del propio negocio" on storage.objects
+  for delete to authenticated
+  using (bucket_id = 'logos' and (storage.foldername(name))[1] = auth_negocio_id()::text);

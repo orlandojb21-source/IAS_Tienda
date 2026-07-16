@@ -19,7 +19,7 @@ export default function LoginPage() {
       <Image src="/logo.png" alt="Innova App Solutions" width={140} height={140} priority />
       <button
         onClick={handleLogin}
-        className="rounded-full bg-foreground px-6 py-3 text-base font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+        className="rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 px-6 py-3 text-base font-medium text-white shadow-sm transition-opacity hover:opacity-90"
       >
         Iniciar sesión con Google
       </button>
