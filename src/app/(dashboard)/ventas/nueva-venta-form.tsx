@@ -215,6 +215,7 @@ export function NuevaVentaForm({
               <option value="Efectivo">Efectivo</option>
               <option value="Tarjeta">Tarjeta</option>
               <option value="Transferencia">Transferencia</option>
+              <option value="Yappy">Yappy</option>
               <option value="Fiado">Fiado (queda debiendo)</option>
             </select>
           </label>
