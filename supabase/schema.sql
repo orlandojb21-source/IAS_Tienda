@@ -79,6 +79,15 @@ create table gastos (
   creado_en timestamptz not null default now()
 );
 
+-- Descuenta stock de un producto al registrar una venta (security invoker:
+-- respeta la misma politica de "productos del propio negocio" de siempre)
+create function descontar_stock(p_producto_id uuid, p_cantidad integer)
+returns void
+language sql
+as $$
+  update productos set stock = stock - p_cantidad where id = p_producto_id;
+$$;
+
 -- Funcion de apoyo: a que negocio pertenece el usuario que inicio sesion
 create function auth_negocio_id()
 returns uuid
@@ -125,8 +134,8 @@ create policy "actualizar mi negocio (solo admin)" on negocios
   for update using (id = auth_negocio_id() and auth_es_admin())
   with check (id = auth_negocio_id() and auth_es_admin());
 
-create policy "ver mi perfil" on perfiles
-  for select using (id = auth.uid());
+create policy "ver perfiles de mi negocio" on perfiles
+  for select using (negocio_id = auth_negocio_id());
 
 -- Politicas: cada negocio solo ve y modifica sus propios datos
 create policy "productos del propio negocio" on productos
