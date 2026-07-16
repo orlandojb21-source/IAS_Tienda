@@ -69,7 +69,17 @@ create table venta_items (
   precio_unitario numeric(12, 2) not null
 );
 
--- 7. Gastos
+-- 7. Abonos (pagos parciales de una venta fiada; el monto_pagado de la
+-- venta se recalcula solo, sumando estos abonos, ver el trigger mas abajo)
+create table abonos (
+  id uuid primary key default gen_random_uuid(),
+  negocio_id uuid not null references negocios (id),
+  venta_id uuid not null references ventas (id),
+  monto numeric(12, 2) not null,
+  creado_en timestamptz not null default now()
+);
+
+-- 8. Gastos
 create table gastos (
   id uuid primary key default gen_random_uuid(),
   negocio_id uuid not null references negocios (id),
@@ -78,6 +88,28 @@ create table gastos (
   categoria text,
   creado_en timestamptz not null default now()
 );
+
+-- Recalcula el monto_pagado de una venta sumando sus abonos, cada vez
+-- que se agrega/edita/borra un abono (el monto_pagado nunca se escribe
+-- a mano, siempre sale de sumar esta tabla)
+create function actualizar_monto_pagado()
+returns trigger
+language plpgsql
+as $$
+begin
+  update ventas
+  set monto_pagado = coalesce(
+    (select sum(monto) from abonos where venta_id = coalesce(new.venta_id, old.venta_id)),
+    0
+  )
+  where id = coalesce(new.venta_id, old.venta_id);
+  return null;
+end;
+$$;
+
+create trigger trg_actualizar_monto_pagado
+after insert or update or delete on abonos
+for each row execute function actualizar_monto_pagado();
 
 -- Descuenta stock de un producto al registrar una venta (security invoker:
 -- respeta la misma politica de "productos del propio negocio" de siempre)
@@ -117,6 +149,7 @@ alter table productos enable row level security;
 alter table clientes enable row level security;
 alter table ventas enable row level security;
 alter table venta_items enable row level security;
+alter table abonos enable row level security;
 alter table gastos enable row level security;
 
 -- Permisos base: un usuario que inicio sesion puede intentar leer/escribir
@@ -124,7 +157,7 @@ alter table gastos enable row level security;
 grant usage on schema public to authenticated;
 grant select, update on negocios to authenticated;
 grant select on perfiles to authenticated;
-grant select, insert, update, delete on productos, clientes, ventas, venta_items, gastos to authenticated;
+grant select, insert, update, delete on productos, clientes, ventas, venta_items, abonos, gastos to authenticated;
 
 -- Politicas: cada usuario solo ve su propio negocio y su propio perfil
 create policy "ver mi negocio" on negocios
@@ -148,6 +181,9 @@ create policy "ventas del propio negocio" on ventas
   for all using (negocio_id = auth_negocio_id()) with check (negocio_id = auth_negocio_id());
 
 create policy "venta_items del propio negocio" on venta_items
+  for all using (negocio_id = auth_negocio_id()) with check (negocio_id = auth_negocio_id());
+
+create policy "abonos del propio negocio" on abonos
   for all using (negocio_id = auth_negocio_id()) with check (negocio_id = auth_negocio_id());
 
 create policy "gastos del propio negocio" on gastos

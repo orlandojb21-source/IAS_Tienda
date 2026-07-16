@@ -29,7 +29,6 @@ export async function crearVenta(datos: {
     0,
   );
   const total = Math.max(subtotal - datos.descuento, 0);
-  const montoPagado = datos.totalmentePagada ? total : 0;
 
   const { data: venta, error: errorVenta } = await supabase
     .from("ventas")
@@ -39,7 +38,6 @@ export async function crearVenta(datos: {
       vendedor_id: perfil.id,
       total,
       descuento: datos.descuento,
-      monto_pagado: montoPagado,
       metodo_pago: datos.metodo_pago,
     })
     .select("id")
@@ -66,7 +64,35 @@ export async function crearVenta(datos: {
     if (errorStock) throw new Error(errorStock.message);
   }
 
+  // El pago inicial (si se pagó de una vez) es el primer abono. El
+  // monto_pagado de la venta lo recalcula solo el trigger de abonos.
+  if (datos.totalmentePagada && total > 0) {
+    const { error: errorAbono } = await supabase.from("abonos").insert({
+      negocio_id: perfil.negocio_id,
+      venta_id: venta.id,
+      monto: total,
+    });
+    if (errorAbono) throw new Error(errorAbono.message);
+  }
+
   revalidatePath("/ventas");
   revalidatePath("/productos");
   redirect("/ventas");
+}
+
+export async function registrarAbono(ventaId: string, monto: number) {
+  const perfil = await getPerfilActual();
+  if (!perfil) throw new Error("Cuenta no activada");
+  if (monto <= 0) throw new Error("El abono debe ser mayor a 0");
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("abonos").insert({
+    negocio_id: perfil.negocio_id,
+    venta_id: ventaId,
+    monto,
+  });
+
+  if (error) throw new Error(error.message);
+  revalidatePath(`/ventas/${ventaId}`);
+  revalidatePath("/ventas");
 }
