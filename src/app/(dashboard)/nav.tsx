@@ -52,7 +52,7 @@ export function Nav({
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <Image src="/logo.png" alt="Innova App Solutions" width={28} height={28} className="rounded-md" />
+          <Image src="/logo.png" alt="Innova App Solutions" width={40} height={40} className="rounded-md" />
           <LogoutButton />
         </div>
       </div>
