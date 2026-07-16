@@ -12,7 +12,7 @@ const enlaces = [
   { href: "/clientes", label: "Clientes" },
   { href: "/ventas", label: "Ventas" },
   { href: "/gastos", label: "Gastos" },
-  { href: "/configuracion", label: "Configuración" },
+  { href: "/configuracion", label: "Perfil" },
 ];
 
 export function Nav({
