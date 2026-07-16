@@ -15,7 +15,7 @@ export async function crearVenta(datos: {
   cliente_id: string | null;
   metodo_pago: string;
   descuento: number;
-  totalmentePagada: boolean;
+  montoPagadoAhora: number;
   items: ItemVenta[];
 }) {
   const perfil = await getPerfilActual();
@@ -29,6 +29,11 @@ export async function crearVenta(datos: {
     0,
   );
   const total = Math.max(subtotal - datos.descuento, 0);
+  const montoPagadoAhora = Math.min(Math.max(datos.montoPagadoAhora, 0), total);
+
+  if (montoPagadoAhora < total && !datos.cliente_id) {
+    throw new Error("Selecciona un cliente para dejar la deuda a su nombre");
+  }
 
   const { data: venta, error: errorVenta } = await supabase
     .from("ventas")
@@ -38,7 +43,6 @@ export async function crearVenta(datos: {
       vendedor_id: perfil.id,
       total,
       descuento: datos.descuento,
-      metodo_pago: datos.metodo_pago,
     })
     .select("id")
     .single();
@@ -64,13 +68,15 @@ export async function crearVenta(datos: {
     if (errorStock) throw new Error(errorStock.message);
   }
 
-  // El pago inicial (si se pagó de una vez) es el primer abono. El
-  // monto_pagado de la venta lo recalcula solo el trigger de abonos.
-  if (datos.totalmentePagada && total > 0) {
+  // El pago que dio en el momento (puede ser todo, parte, o nada) es el
+  // primer abono. El monto_pagado de la venta lo recalcula solo el
+  // trigger de abonos.
+  if (montoPagadoAhora > 0) {
     const { error: errorAbono } = await supabase.from("abonos").insert({
       negocio_id: perfil.negocio_id,
       venta_id: venta.id,
-      monto: total,
+      monto: montoPagadoAhora,
+      metodo_pago: datos.metodo_pago,
     });
     if (errorAbono) throw new Error(errorAbono.message);
   }
@@ -80,7 +86,7 @@ export async function crearVenta(datos: {
   redirect("/ventas");
 }
 
-export async function registrarAbono(ventaId: string, monto: number) {
+export async function registrarAbono(ventaId: string, monto: number, metodoPago: string) {
   const perfil = await getPerfilActual();
   if (!perfil) throw new Error("Cuenta no activada");
   if (monto <= 0) throw new Error("El abono debe ser mayor a 0");
@@ -90,6 +96,7 @@ export async function registrarAbono(ventaId: string, monto: number) {
     negocio_id: perfil.negocio_id,
     venta_id: ventaId,
     monto,
+    metodo_pago: metodoPago,
   });
 
   if (error) throw new Error(error.message);

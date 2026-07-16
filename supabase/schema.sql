@@ -53,7 +53,6 @@ create table ventas (
   total numeric(12, 2) not null default 0,
   descuento numeric(12, 2) not null default 0,
   monto_pagado numeric(12, 2) not null default 0,
-  metodo_pago text,
   creado_en timestamptz not null default now()
 );
 -- La deuda de un cliente (fiado) no se guarda como numero aparte: se
@@ -69,13 +68,16 @@ create table venta_items (
   precio_unitario numeric(12, 2) not null
 );
 
--- 7. Abonos (pagos parciales de una venta fiada; el monto_pagado de la
--- venta se recalcula solo, sumando estos abonos, ver el trigger mas abajo)
+-- 7. Abonos (cada pago de una venta, sea al momento de vender o despues
+-- para saldar una deuda; el metodo_pago va aqui, no en ventas, porque
+-- cada abono puede haberse pagado de forma distinta. El monto_pagado de
+-- la venta se recalcula solo sumando estos abonos, ver el trigger mas abajo)
 create table abonos (
   id uuid primary key default gen_random_uuid(),
   negocio_id uuid not null references negocios (id),
   venta_id uuid not null references ventas (id),
   monto numeric(12, 2) not null,
+  metodo_pago text not null default 'Efectivo',
   creado_en timestamptz not null default now()
 );
 

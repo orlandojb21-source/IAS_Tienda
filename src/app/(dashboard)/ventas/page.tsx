@@ -5,7 +5,7 @@ export default async function VentasPage() {
   const supabase = await createClient();
   const { data: ventas } = await supabase
     .from("ventas")
-    .select("id, total, monto_pagado, metodo_pago, creado_en, clientes(nombre), perfiles(nombre)")
+    .select("id, total, monto_pagado, creado_en, clientes(nombre), perfiles(nombre)")
     .order("creado_en", { ascending: false })
     .limit(50);
 
@@ -36,7 +36,6 @@ export default async function VentasPage() {
                   <th className="px-4 py-3 font-medium">Fecha</th>
                   <th className="px-4 py-3 font-medium">Cliente</th>
                   <th className="px-4 py-3 font-medium">Vendedor</th>
-                  <th className="px-4 py-3 font-medium">Método</th>
                   <th className="px-4 py-3 font-medium">Total</th>
                   <th className="px-4 py-3 font-medium">Estado</th>
                 </tr>
@@ -59,9 +58,6 @@ export default async function VentasPage() {
                       </td>
                       <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
                         {vendedor?.nombre ?? "—"}
-                      </td>
-                      <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
-                        {venta.metodo_pago}
                       </td>
                       <td className="px-4 py-3 font-medium text-black dark:text-zinc-50">
                         {venta.total}

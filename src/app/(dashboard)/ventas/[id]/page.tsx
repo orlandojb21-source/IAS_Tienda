@@ -43,7 +43,6 @@ export default async function VentaDetallePage({
         <div className="mb-4 grid grid-cols-2 gap-2 text-sm text-zinc-600 dark:text-zinc-400">
           <p>Cliente: {cliente?.nombre ?? "Cliente ocasional"}</p>
           <p>Vendedor: {vendedor?.nombre ?? "—"}</p>
-          <p>Método: {venta.metodo_pago}</p>
           <p>Descuento: {venta.descuento}</p>
         </div>
 
@@ -91,7 +90,9 @@ export default async function VentaDetallePage({
           <ul className="flex flex-col gap-2 text-sm">
             {abonos.map((abono) => (
               <li key={abono.id} className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                <span>{new Date(abono.creado_en).toLocaleString("es")}</span>
+                <span>
+                  {new Date(abono.creado_en).toLocaleString("es")} — {abono.metodo_pago}
+                </span>
                 <span className="font-medium text-black dark:text-zinc-50">{abono.monto}</span>
               </li>
             ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { crearVenta } from "./actions";
 
@@ -37,6 +37,8 @@ export function NuevaVentaForm({
   const [metodoPago, setMetodoPago] = useState("Efectivo");
   const [descuento, setDescuento] = useState(0);
   const [filas, setFilas] = useState<Fila[]>([]);
+  const [montoPagadoAhora, setMontoPagadoAhora] = useState(0);
+  const [montoTocado, setMontoTocado] = useState(false);
 
   const [productoSeleccionado, setProductoSeleccionado] = useState(
     productos[0]?.id ?? "",
@@ -48,6 +50,12 @@ export function NuevaVentaForm({
     [filas],
   );
   const total = Math.max(subtotal - descuento, 0);
+  const saldoPendiente = Math.max(total - montoPagadoAhora, 0);
+
+  // Mientras el usuario no toque el campo a mano, asumimos que paga todo.
+  useEffect(() => {
+    if (!montoTocado) setMontoPagadoAhora(total);
+  }, [total, montoTocado]);
 
   function agregarProducto() {
     const producto = productos.find((p) => p.id === productoSeleccionado);
@@ -86,7 +94,7 @@ export function NuevaVentaForm({
           cliente_id: clienteId || null,
           metodo_pago: metodoPago,
           descuento,
-          totalmentePagada: metodoPago !== "Fiado",
+          montoPagadoAhora,
           items: filas,
         });
       } catch (e) {
@@ -206,20 +214,6 @@ export function NuevaVentaForm({
             </select>
           </label>
           <label className="flex flex-col gap-1 text-sm">
-            Método de pago
-            <select
-              value={metodoPago}
-              onChange={(e) => setMetodoPago(e.target.value)}
-              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-zinc-700 dark:bg-zinc-950"
-            >
-              <option value="Efectivo">Efectivo</option>
-              <option value="Tarjeta">Tarjeta</option>
-              <option value="Transferencia">Transferencia</option>
-              <option value="Yappy">Yappy</option>
-              <option value="Fiado">Fiado (queda debiendo)</option>
-            </select>
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
             Descuento
             <input
               type="number"
@@ -230,6 +224,36 @@ export function NuevaVentaForm({
               className="rounded-lg border border-zinc-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-zinc-700 dark:bg-zinc-950"
             />
           </label>
+          <label className="flex flex-col gap-1 text-sm">
+            ¿Cuánto te pagó ahora?
+            <input
+              type="number"
+              step="0.01"
+              min={0}
+              max={total}
+              value={montoPagadoAhora}
+              onChange={(e) => {
+                setMontoTocado(true);
+                setMontoPagadoAhora(Number(e.target.value));
+              }}
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-zinc-700 dark:bg-zinc-950"
+            />
+          </label>
+          {montoPagadoAhora > 0 && (
+            <label className="flex flex-col gap-1 text-sm">
+              Método de ese pago
+              <select
+                value={metodoPago}
+                onChange={(e) => setMetodoPago(e.target.value)}
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-zinc-700 dark:bg-zinc-950"
+              >
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Yappy">Yappy</option>
+              </select>
+            </label>
+          )}
         </div>
 
         <div className="mt-4 flex items-center justify-between border-t border-zinc-200 pt-4 dark:border-zinc-800">
@@ -241,9 +265,10 @@ export function NuevaVentaForm({
           </span>
         </div>
 
-        {metodoPago === "Fiado" && clienteId === "" && (
+        {saldoPendiente > 0 && (
           <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-            Para vender fiado, selecciona un cliente (si no, no vas a poder cobrarle después).
+            Quedará debiendo {saldoPendiente.toFixed(2)}
+            {clienteId === "" && " — selecciona un cliente para poder cobrarle después"}
           </p>
         )}
 
@@ -253,7 +278,7 @@ export function NuevaVentaForm({
           <button
             type="button"
             onClick={guardarVenta}
-            disabled={pending || filas.length === 0 || (metodoPago === "Fiado" && clienteId === "")}
+            disabled={pending || filas.length === 0 || (saldoPendiente > 0 && clienteId === "")}
             className="rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 px-5 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {pending ? "Guardando..." : "Registrar venta"}
