@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getPerfilActual } from "@/lib/perfil";
+import { NegocioLogo } from "./negocio-logo";
 
 const accesos = [
   { href: "/productos", label: "Productos", descripcion: "Inventario y precios" },
@@ -15,7 +15,7 @@ export default async function InicioPage() {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-8 flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <Image src="/logo.png" alt="" width={48} height={48} className="rounded-lg" />
+        <NegocioLogo nombre={perfil?.negocio_nombre ?? ""} logoUrl={perfil?.negocio_logo_url ?? null} size={48} />
         <div>
           <h1 className="text-xl font-semibold text-black dark:text-zinc-50">
             Hola, {perfil?.nombre}

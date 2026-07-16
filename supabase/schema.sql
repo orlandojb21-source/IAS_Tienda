@@ -151,14 +151,7 @@ insert into storage.buckets (id, name, public)
 values ('logos', 'logos', true)
 on conflict (id) do nothing;
 
-create policy "subir logo del propio negocio" on storage.objects
-  for insert to authenticated
+create policy "logos del propio negocio" on storage.objects
+  for all to authenticated
+  using (bucket_id = 'logos' and (storage.foldername(name))[1] = auth_negocio_id()::text)
   with check (bucket_id = 'logos' and (storage.foldername(name))[1] = auth_negocio_id()::text);
-
-create policy "actualizar logo del propio negocio" on storage.objects
-  for update to authenticated
-  using (bucket_id = 'logos' and (storage.foldername(name))[1] = auth_negocio_id()::text);
-
-create policy "borrar logo del propio negocio" on storage.objects
-  for delete to authenticated
-  using (bucket_id = 'logos' and (storage.foldername(name))[1] = auth_negocio_id()::text);

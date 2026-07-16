@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "../logout-button";
+import { NegocioLogo } from "./negocio-logo";
 
 const enlaces = [
   { href: "/", label: "Inicio" },
@@ -11,16 +12,23 @@ const enlaces = [
   { href: "/clientes", label: "Clientes" },
   { href: "/ventas", label: "Ventas" },
   { href: "/gastos", label: "Gastos" },
+  { href: "/configuracion", label: "Configuración" },
 ];
 
-export function Nav({ negocioNombre }: { negocioNombre: string }) {
+export function Nav({
+  negocioNombre,
+  negocioLogoUrl,
+}: {
+  negocioNombre: string;
+  negocioLogoUrl: string | null;
+}) {
   const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90">
       <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-3">
         <div className="flex flex-wrap items-center gap-3">
-          <Image src="/logo.png" alt="" width={28} height={28} className="rounded-md" />
+          <NegocioLogo nombre={negocioNombre} logoUrl={negocioLogoUrl} />
           <span className="font-semibold text-black dark:text-zinc-50">
             {negocioNombre}
           </span>
@@ -43,7 +51,10 @@ export function Nav({ negocioNombre }: { negocioNombre: string }) {
             })}
           </nav>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-4">
+          <Image src="/logo.png" alt="Innova App Solutions" width={28} height={28} className="rounded-md" />
+          <LogoutButton />
+        </div>
       </div>
     </header>
   );

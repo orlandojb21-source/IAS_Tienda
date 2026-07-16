@@ -7,6 +7,7 @@ export type PerfilActual = {
   rol: "admin" | "vendedor";
   negocio_id: string;
   negocio_nombre: string;
+  negocio_logo_url: string | null;
 };
 
 export async function getPerfilActual(): Promise<PerfilActual | null> {
@@ -19,13 +20,16 @@ export async function getPerfilActual(): Promise<PerfilActual | null> {
 
   const { data: perfil } = await supabase
     .from("perfiles")
-    .select("id, nombre, rol, negocio_id, negocios(nombre)")
+    .select("id, nombre, rol, negocio_id, negocios(nombre, logo_url)")
     .eq("id", user.id)
     .maybeSingle();
 
   if (!perfil) return null;
 
-  const negocio = perfil.negocios as unknown as { nombre: string } | null;
+  const negocio = perfil.negocios as unknown as {
+    nombre: string;
+    logo_url: string | null;
+  } | null;
 
   return {
     id: perfil.id,
@@ -33,5 +37,6 @@ export async function getPerfilActual(): Promise<PerfilActual | null> {
     rol: perfil.rol,
     negocio_id: perfil.negocio_id,
     negocio_nombre: negocio?.nombre ?? "",
+    negocio_logo_url: negocio?.logo_url ?? null,
   };
 }
