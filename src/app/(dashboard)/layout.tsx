@@ -28,10 +28,14 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
-      <Nav negocioNombre={perfil.negocio_nombre} negocioLogoUrl={perfil.negocio_logo_url} />
-      <main className="flex-1 px-6 py-8">{children}</main>
-      <Footer />
+    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black print:bg-white">
+      <div className="print:hidden">
+        <Nav negocioNombre={perfil.negocio_nombre} negocioLogoUrl={perfil.negocio_logo_url} />
+      </div>
+      <main className="flex-1 px-6 py-8 print:p-0">{children}</main>
+      <div className="print:hidden">
+        <Footer />
+      </div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AbonoForm } from "./abono-form";
@@ -35,9 +36,17 @@ export default async function VentaDetallePage({
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-6 text-2xl font-semibold text-black dark:text-zinc-50">
-        Venta del {new Date(venta.creado_en).toLocaleString("es")}
-      </h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
+          Venta del {new Date(venta.creado_en).toLocaleString("es")}
+        </h1>
+        <Link
+          href={`/ventas/${venta.id}/recibo`}
+          className="rounded-full border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700"
+        >
+          Ver recibo
+        </Link>
+      </div>
 
       <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mb-4 grid grid-cols-2 gap-2 text-sm text-zinc-600 dark:text-zinc-400">
