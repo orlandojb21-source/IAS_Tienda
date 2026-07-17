@@ -1,13 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { resolverPeriodo } from "../rango";
-
-function celda(valor: unknown) {
-  const texto = String(valor ?? "");
-  if (/[",\n]/.test(texto)) {
-    return `"${texto.replace(/"/g, '""')}"`;
-  }
-  return texto;
-}
+import { celda } from "@/lib/csv";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);

@@ -1,12 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-
-function celda(valor: unknown) {
-  const texto = String(valor ?? "");
-  if (/[",\n]/.test(texto)) {
-    return `"${texto.replace(/"/g, '""')}"`;
-  }
-  return texto;
-}
+import { celda } from "@/lib/csv";
 
 export async function GET() {
   const supabase = await createClient();
