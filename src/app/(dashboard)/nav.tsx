@@ -50,7 +50,7 @@ export function Nav({
 
   return (
     <>
-      <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90">
+      <header className="fixed inset-x-0 top-0 z-20 border-b border-zinc-300 bg-zinc-100/95 backdrop-blur dark:border-zinc-700 dark:bg-zinc-900/95 sm:sticky sm:border-zinc-200 sm:bg-white/90 sm:dark:border-zinc-800 sm:dark:bg-zinc-950/90">
         <div className="flex items-center justify-between gap-4 px-6 py-3">
           <div className="flex items-center gap-3">
             <NegocioLogo nombre={negocioNombre} logoUrl={negocioLogoUrl} />
@@ -81,7 +81,7 @@ export function Nav({
       </header>
 
       {/* Barra de menu fija abajo, solo en movil */}
-      <nav className="fixed inset-x-0 bottom-0 z-10 flex flex-wrap justify-center gap-1 border-t border-zinc-200 bg-white/95 px-2 py-2 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95 sm:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-20 flex flex-wrap justify-center gap-1 border-t border-zinc-300 bg-zinc-100/95 px-2 py-2 backdrop-blur dark:border-zinc-700 dark:bg-zinc-900/95 sm:hidden">
         {enlaces.map((enlace) => (
           <EnlaceNav
             key={enlace.href}
