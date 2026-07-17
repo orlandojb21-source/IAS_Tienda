@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ImprimirBoton } from "../../../imprimir-boton";
 
 export function ReciboAcciones({ textoParaCompartir }: { textoParaCompartir: string }) {
   const [copiado, setCopiado] = useState(false);
@@ -21,13 +22,7 @@ export function ReciboAcciones({ textoParaCompartir }: { textoParaCompartir: str
 
   return (
     <div className="print:hidden mb-6 flex flex-wrap gap-3">
-      <button
-        type="button"
-        onClick={() => window.print()}
-        className="rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 px-5 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
-      >
-        Imprimir / Guardar como PDF
-      </button>
+      <ImprimirBoton />
       <button
         type="button"
         onClick={compartir}

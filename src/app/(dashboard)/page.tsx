@@ -3,7 +3,7 @@ import { getPerfilActual } from "@/lib/perfil";
 import { NegocioLogo } from "./negocio-logo";
 
 const accesos = [
-  { href: "/productos", label: "Productos", descripcion: "Inventario y precios" },
+  { href: "/productos", label: "Inventario", descripcion: "Productos y precios" },
   { href: "/clientes", label: "Clientes", descripcion: "Contactos y fiado" },
   { href: "/ventas", label: "Ventas", descripcion: "Registra una venta" },
   { href: "/gastos", label: "Gastos", descripcion: "Ingresos vs egresos" },

@@ -11,16 +11,30 @@ export default async function ProductosPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
-          Productos
+          Inventario
         </h1>
-        <Link
-          href="/productos/nuevo"
-          className="rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 px-5 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
-        >
-          + Nuevo producto
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/productos/exportar"
+            className="rounded-full border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700"
+          >
+            Exportar a Excel
+          </Link>
+          <Link
+            href="/productos/imprimir"
+            className="rounded-full border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700"
+          >
+            Exportar a PDF
+          </Link>
+          <Link
+            href="/productos/nuevo"
+            className="rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 px-5 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
+          >
+            + Nuevo producto
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">

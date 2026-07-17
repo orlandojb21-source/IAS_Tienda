@@ -8,7 +8,7 @@ import { NegocioLogo } from "./negocio-logo";
 
 const enlaces = [
   { href: "/", label: "Inicio" },
-  { href: "/productos", label: "Productos" },
+  { href: "/productos", label: "Inventario" },
   { href: "/clientes", label: "Clientes" },
   { href: "/ventas", label: "Ventas" },
   { href: "/gastos", label: "Gastos" },
