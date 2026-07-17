@@ -32,8 +32,8 @@ export default async function DashboardLayout({
       <div className="print:hidden">
         <Nav negocioNombre={perfil.negocio_nombre} negocioLogoUrl={perfil.negocio_logo_url} />
       </div>
-      <main className="flex-1 px-6 py-8 print:p-0">{children}</main>
-      <div className="print:hidden">
+      <main className="flex-1 px-6 py-8 pb-28 sm:pb-8 print:p-0">{children}</main>
+      <div className="hidden print:hidden sm:block">
         <Footer />
       </div>
     </div>
