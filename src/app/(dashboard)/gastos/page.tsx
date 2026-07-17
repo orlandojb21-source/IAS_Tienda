@@ -38,6 +38,7 @@ export default async function GastosPage() {
                   <th className="px-4 py-3 font-medium">Fecha</th>
                   <th className="px-4 py-3 font-medium">Descripción</th>
                   <th className="px-4 py-3 font-medium">Categoría</th>
+                  <th className="px-4 py-3 font-medium">Método</th>
                   <th className="px-4 py-3 font-medium">Monto</th>
                   <th className="px-4 py-3"></th>
                 </tr>
@@ -56,6 +57,9 @@ export default async function GastosPage() {
                     </td>
                     <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
                       {gasto.categoria ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                      {gasto.metodo_pago}
                     </td>
                     <td className="px-4 py-3 font-medium text-black dark:text-zinc-50">
                       {gasto.monto}

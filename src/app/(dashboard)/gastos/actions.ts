@@ -14,6 +14,7 @@ export async function crearGasto(formData: FormData) {
     descripcion: formData.get("descripcion") as string,
     monto: Number(formData.get("monto")),
     categoria: (formData.get("categoria") as string) || null,
+    metodo_pago: formData.get("metodo_pago") as string,
   });
 
   if (error) throw new Error(error.message);
@@ -28,6 +29,7 @@ export async function actualizarGasto(id: string, formData: FormData) {
       descripcion: formData.get("descripcion") as string,
       monto: Number(formData.get("monto")),
       categoria: (formData.get("categoria") as string) || null,
+      metodo_pago: formData.get("metodo_pago") as string,
     })
     .eq("id", id);
 

@@ -88,6 +88,7 @@ create table gastos (
   descripcion text not null,
   monto numeric(12, 2) not null,
   categoria text,
+  metodo_pago text not null default 'Efectivo',
   creado_en timestamptz not null default now()
 );
 

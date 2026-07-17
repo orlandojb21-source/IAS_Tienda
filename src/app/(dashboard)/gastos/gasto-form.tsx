@@ -8,7 +8,12 @@ export function GastoForm({
   valoresIniciales,
 }: {
   action: (formData: FormData) => Promise<void>;
-  valoresIniciales?: { descripcion: string; monto: number; categoria: string | null };
+  valoresIniciales?: {
+    descripcion: string;
+    monto: number;
+    categoria: string | null;
+    metodo_pago?: string;
+  };
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -54,6 +59,20 @@ export function GastoForm({
           placeholder="Ej. Alquiler, Servicios, Compras"
           className="rounded-lg border border-zinc-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-zinc-700 dark:bg-zinc-950"
         />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Método de pago
+        <select
+          name="metodo_pago"
+          defaultValue={valoresIniciales?.metodo_pago ?? "Efectivo"}
+          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-zinc-700 dark:bg-zinc-950"
+        >
+          <option value="Efectivo">Efectivo</option>
+          <option value="Tarjeta">Tarjeta</option>
+          <option value="Transferencia">Transferencia</option>
+          <option value="Yappy">Yappy</option>
+        </select>
       </label>
 
       <div className="flex gap-3">
