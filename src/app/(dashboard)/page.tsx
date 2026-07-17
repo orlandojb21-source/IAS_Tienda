@@ -7,6 +7,7 @@ const accesos = [
   { href: "/clientes", label: "Clientes", descripcion: "Contactos y fiado" },
   { href: "/ventas", label: "Ventas", descripcion: "Registra una venta" },
   { href: "/gastos", label: "Gastos", descripcion: "Ingresos vs egresos" },
+  { href: "/balance", label: "Balance", descripcion: "Ingresos, egresos y ganancias" },
 ];
 
 export default async function InicioPage() {

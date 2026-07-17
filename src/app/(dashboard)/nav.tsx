@@ -12,6 +12,7 @@ const enlaces = [
   { href: "/clientes", label: "Clientes" },
   { href: "/ventas", label: "Ventas" },
   { href: "/gastos", label: "Gastos" },
+  { href: "/balance", label: "Balance" },
   { href: "/configuracion", label: "Perfil" },
 ];
 
